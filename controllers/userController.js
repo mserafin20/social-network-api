@@ -1,4 +1,4 @@
-const { ObjectId } = require('mongoose').Types;
+// const { ObjectId } = require('mongoose').Types;
 const { User } = require('../models');
 
 // Aggregate function to get the number of students overall
@@ -73,46 +73,46 @@ module.exports = {
 //   },
 
   // Add an assignment to a student
-  async addAssignment(req, res) {
-    console.log('You are adding an assignment');
-    console.log(req.body);
+//   async addAssignment(req, res) {
+//     console.log('You are adding an assignment');
+//     console.log(req.body);
 
-    try {
-      const student = await Student.findOneAndUpdate(
-        { _id: req.params.studentId },
-        { $addToSet: { assignments: req.body } },
-        { runValidators: true, new: true }
-      );
+//     try {
+//       const student = await Student.findOneAndUpdate(
+//         { _id: req.params.studentId },
+//         { $addToSet: { assignments: req.body } },
+//         { runValidators: true, new: true }
+//       );
 
-      if (!student) {
-        return res
-          .status(404)
-          .json({ message: 'No student found with that ID :(' });
-      }
+//       if (!student) {
+//         return res
+//           .status(404)
+//           .json({ message: 'No student found with that ID :(' });
+//       }
 
-      res.json(student);
-    } catch (err) {
-      res.status(500).json(err);
-    }
-  },
-  // Remove assignment from a student
-  async removeAssignment(req, res) {
-    try {
-      const student = await Student.findOneAndUpdate(
-        { _id: req.params.studentId },
-        { $pull: { assignment: { assignmentId: req.params.assignmentId } } },
-        { runValidators: true, new: true }
-      );
+//       res.json(student);
+//     } catch (err) {
+//       res.status(500).json(err);
+//     }
+//   },
+//   // Remove assignment from a student
+//   async removeAssignment(req, res) {
+//     try {
+//       const student = await Student.findOneAndUpdate(
+//         { _id: req.params.studentId },
+//         { $pull: { assignment: { assignmentId: req.params.assignmentId } } },
+//         { runValidators: true, new: true }
+//       );
 
-      if (!student) {
-        return res
-          .status(404)
-          .json({ message: 'No student found with that ID :(' });
-      }
+//       if (!student) {
+//         return res
+//           .status(404)
+//           .json({ message: 'No student found with that ID :(' });
+//       }
 
-      res.json(student);
-    } catch (err) {
-      res.status(500).json(err);
-    }
-  },
+//       res.json(student);
+//     } catch (err) {
+//       res.status(500).json(err);
+//     }
+//   },
 };
