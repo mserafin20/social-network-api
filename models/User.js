@@ -6,14 +6,17 @@ const userSchema = new Schema(
         username: {
             type: String,
             required: true,
-            // Unique
-            // Trim
+            unique: true,
+            trim: true,
         },
         email: {
             type: String,
             required: true,
-            // Unique
-            // validate email
+            unique: true,
+            validator: function(v) {
+                return /^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/.test(v);
+            },
+            message: props => `${props.value} isn't a valid email`
         },
 
         thoughts: [
@@ -23,7 +26,7 @@ const userSchema = new Schema(
             }
         ],
 
-        friend: [
+        friends: [
             {
                 type: Schema.Types.ObjectId,
                 ref: "User"
@@ -33,8 +36,8 @@ const userSchema = new Schema(
     {
         toJSON: {
             virtuals: true,
-            getters: true,
         },
+        id: false,
     }
 );
 
