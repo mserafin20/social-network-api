@@ -57,47 +57,46 @@ module.exports = {
     }
   },
 
-  // Add an assignment to a student
-  //   async addAssignment(req, res) {
-  //     console.log('You are adding an assignment');
-  //     console.log(req.body);
+  // Add a friend to user
 
-  //     try {
-  //       const student = await Student.findOneAndUpdate(
-  //         { _id: req.params.studentId },
-  //         { $addToSet: { assignments: req.body } },
-  //         { runValidators: true, new: true }
-  //       );
+    async addFriend(req, res) {
+      try {
+        const user = await User.findOneAndUpdate(
+          { _id: req.params.userId },
+          { $addToSet: { friends: req.body } },
+          { runValidators: true, new: true }
+        );
 
-  //       if (!student) {
-  //         return res
-  //           .status(404)
-  //           .json({ message: 'No student found with that ID :(' });
-  //       }
+        if (!user) {
+          return res
+            .status(404)
+            .json({ message: 'No user found' });
+        }
 
-  //       res.json(student);
-  //     } catch (err) {
-  //       res.status(500).json(err);
-  //     }
-  //   },
-  //   // Remove assignment from a student
-  //   async removeAssignment(req, res) {
-  //     try {
-  //       const student = await Student.findOneAndUpdate(
-  //         { _id: req.params.studentId },
-  //         { $pull: { assignment: { assignmentId: req.params.assignmentId } } },
-  //         { runValidators: true, new: true }
-  //       );
+        res.json(user);
+      } catch (err) {
+        res.status(500).json(err);
+      }
+    },
+    // Remove friend from a user
 
-  //       if (!student) {
-  //         return res
-  //           .status(404)
-  //           .json({ message: 'No student found with that ID :(' });
-  //       }
+    async removeFriend(req, res) {
+      try {
+        const user = await User.findOneAndUpdate(
+          { _id: req.params.userId },
+          { $pull: { friends: req.params.friendId } },
+          { runValidators: true, new: true }
+        );
 
-  //       res.json(student);
-  //     } catch (err) {
-  //       res.status(500).json(err);
-  //     }
-  //   },
+        if (!user) {
+          return res
+            .status(404)
+            .json({ message: 'No user found' });
+        }
+
+        res.json(user);
+      } catch (err) {
+        res.status(500).json(err);
+      }
+    },
 };
