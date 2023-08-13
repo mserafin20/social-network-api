@@ -12,7 +12,7 @@ module.exports = {
       return res.status(500).json(err);
     }
   },
-  // Get a single student 
+  // Get a single user 
 
   async getSingleUser(req, res) {
     try {
