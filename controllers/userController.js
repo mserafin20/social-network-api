@@ -1,14 +1,11 @@
 // const { ObjectId } = require('mongoose').Types;
-const { User } = require('../models');
-
-// Aggregate function to get the number of students overall
+const { User, Thought } = require('../models');
 
 module.exports = {
-  // Get all students
+  // Get all users
   async getUsers(req, res) {
     try {
       const users = await User.find();
-
       res.json(users);
     } catch (err) {
       console.log(err);
@@ -17,24 +14,20 @@ module.exports = {
   },
   // Get a single student -- Convert into user
 
-//   async getSingleStudent(req, res) {
-//     try {
-//       const student = await Student.findOne({ _id: req.params.studentId })
-//         .select('-__v');
+  async getSingleUser(req, res) {
+    try {
+      const user = await User.findOne({ _id: req.params.userId })
+        .select('-__v');
 
-//       if (!student) {
-//         return res.status(404).json({ message: 'No student with that ID' })
-//       }
+      if (!user) {
+        return res.status(404).json({ message: 'No user with that ID' })
+      }
 
-//       res.json({
-//         student,
-//         grade: await grade(req.params.studentId),
-//       });
-//     } catch (err) {
-//       console.log(err);
-//       return res.status(500).json(err);
-//     }
-//   },
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json(err);
+    }
+  },
   // create a new student
   async createUser(req, res) {
     try {
