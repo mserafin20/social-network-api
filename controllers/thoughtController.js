@@ -47,64 +47,93 @@ module.exports = {
       res.status(500).json(err);
     }
   },
-  // Delete a user and remove their thoughts 
-  async deleteUser(req, res) {
-    try {
-      const user = await User.findOneAndRemove({ _id: req.params.userId });
 
-      if (!user) {
-        return res.status(404).json({ message: 'No such user exists' });
+  // Update a thought that already exists
+
+  async updateThought(req, res) {
+    try {
+        const thought = await Thought.findOneAndUpdate(
+            { _id: req.params.thoughtId },
+            { $set: req.body },
+            { runValidators: true, new: true }
+        );
+
+        if (!thought) {
+            return res.status(404)
+            .json({ message: "No thought found with that Id!" });
+        }
+        res.json({ message: "Your thought has been updated!" });
+    } catch (err) {
+        res.status(500).json(err);
+    }
+  },
+
+  // Delete a thought
+  async deleteThought(req, res) {
+    try {
+      const thought = await Thought.findOneAndRemove({ _id: req.params.thoughtId });
+
+      if (!thought) {
+        return res.status(404).json({ message: 'No such thought exists' });
       }
 
-      const thought = await Thought.deleteMany({
-        username: user.username,
-      });
+      const user = await User.findOneAndUpdate(
+        { thoughts: req.params.thoughtId },
+            { $pull: { thoughts: req.params.thoughtId } },
+            { new: true }
+      );
 
-      res.json({ message: 'User successfully deleted' });
+      if (!user) {
+        return res
+        .status(404)
+        .json({ message: "Thought deleted without user"})
+      }
+
+      res.json({ message: "Thought successfully deleted!" });
     } catch (err) {
       console.log(err);
       res.status(500).json(err);
     }
   },
 
-  // Add a friend to user
+  // Add a reaction to thought
 
-    async addFriend(req, res) {
-      try {
-        const user = await User.findOneAndUpdate(
-          { _id: req.params.userId },
-          { $addToSet: { friends: req.body } },
-          { runValidators: true, new: true }
-        );
+    async addReaction(req, res) {
+        try {
+            const thought = await Thought.findOneAndUpdate(
+                { _id: req.params.thoughtId },
+                { $addToSet: { reactions: req.body } },
+                { runValidators: true, new: true }
+            );
 
-        if (!user) {
+        if (!thought) {
           return res
             .status(404)
-            .json({ message: 'No user found' });
+            .json({ message: 'No thought found with that Id' });
         }
 
-        res.json(user);
+        res.json(thought);
       } catch (err) {
         res.status(500).json(err);
       }
     },
-    // Remove friend from a user
+    // Remove reaction from a thought
 
-    async removeFriend(req, res) {
-      try {
-        const user = await User.findOneAndUpdate(
-          { _id: req.params.userId },
-          { $pull: { friends: req.params.friendId } },
-          { runValidators: true, new: true }
-        );
+    async removeReaction(req, res) {
+        try {
+            const thought = await Thought.findOneAndUpdate(
+                { _id: req.params.thoughtId },
+                { $pull: { reactions: { reactionId: req.params.reactionId } } },
+                { runValidators: true, new: true }
+            );
 
-        if (!user) {
+        if (!thought) {
           return res
             .status(404)
-            .json({ message: 'No user found' });
+            .json({ message: 'No thought found with that Id' });
         }
 
-        res.json(user);
+        res.json({ message: "Reaction was successfully deleted!"});
       } catch (err) {
         res.status(500).json(err);
       }
