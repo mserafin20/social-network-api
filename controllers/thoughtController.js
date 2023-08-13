@@ -1,26 +1,26 @@
 // const { ObjectId } = require('mongoose').Types;
-const { User, Thought } = require("../models");
+const { Thought, User } = require("../models");
 
 module.exports = {
-  // Get all users
-  async getUsers(req, res) {
+  // Get all thoughts
+  async getThoughts(req, res) {
     try {
-      const users = await User.find();
-      res.json(users);
+      const thoughts = await Thought.find();
+      res.json(thoughts);
     } catch (err) {
       console.log(err);
       return res.status(500).json(err);
     }
   },
-  // Get a single student 
+  // Get a single thought 
 
-  async getSingleUser(req, res) {
+  async getSingleThought(req, res) {
     try {
-      const user = await User.findOne({ _id: req.params.userId })
+      const thought = await Thought.findOne({ _id: req.params.thoughtId })
         .select('-__v');
 
-      if (!user) {
-        return res.status(404).json({ message: 'No user with that ID' })
+      if (!thought) {
+        return res.status(404).json({ message: 'No thought with that ID' })
       }
 
     } catch (err) {
@@ -28,12 +28,22 @@ module.exports = {
       return res.status(500).json(err);
     }
   },
-  // create a new user
-  async createUser(req, res) {
+  // create a new thought
+  async createThought(req, res) {
     try {
-      const user = await User.create(req.body);
-      res.json(user);
+      const thought = await Thought.create(req.body);
+      const user = await User.findOneAndUpdate(
+        { _id: req.body.userId },
+        { $addToSet: { thoughts: thought._id } },
+        { new: true }
+      );
+
+      if(!user) { 
+        return res.status(404).json({ message: "Thought created but no user ID found."})
+      }
+      res.json("thought created!");
     } catch (err) {
+        console.log(err);
       res.status(500).json(err);
     }
   },
